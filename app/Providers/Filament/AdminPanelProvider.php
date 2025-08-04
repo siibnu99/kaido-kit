@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Login;
+use App\Filament\Widgets\CopyrightWidget;
 use App\Models\User;
 use App\Settings\KaidoSetting;
 use Filament\Http\Middleware\Authenticate;
@@ -31,6 +32,8 @@ use Rupadana\ApiService\ApiServicePlugin;
 
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 class AdminPanelProvider extends PanelProvider
@@ -54,8 +57,8 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('admin')
-            ->path('')
+            ->id('dashboard')
+            ->path('dashboard')
             ->when($this->settings->login_enabled ?? true, fn($panel) => $panel->login(Login::class))
             ->when($this->settings->registration_enabled ?? true, fn($panel) => $panel->registration())
             ->when($this->settings->password_reset_enabled ?? true, fn($panel) => $panel->passwordReset())
@@ -71,7 +74,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                CopyrightWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -102,7 +106,7 @@ class AdminPanelProvider extends PanelProvider
         $plugins = [
             ThemesPlugin::make(),
             FilamentShieldPlugin::make(),
-            ApiServicePlugin::make(),
+            // ApiServicePlugin::make(),
             BreezyCore::make()
                 ->myProfile(
                     shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
@@ -119,6 +123,16 @@ class AdminPanelProvider extends PanelProvider
                         ->disk('public')
                 )
                 ->enableTwoFactorAuthentication(),
+            \Boquizo\FilamentLogViewer\FilamentLogViewerPlugin::make()
+                ->navigationGroup('System')
+                ->navigationSort(2)
+                ->navigationIcon('heroicon-s-document-text')
+                ->navigationLabel('Log Viewer')
+                ->authorize(function () {
+                    /** @var App\Models\User $user */
+                    $user = Auth::user();
+                    return $user && ($user->can('page_ViewLog') || $user->can('page_ListLogs'));
+                }),
         ];
 
         if ($this->settings->sso_enabled ?? true) {
