@@ -1,6 +1,6 @@
 <?php
 
-use App\Settings\KaidoSetting;
+use App\Settings\SystemSetting;
 
 return [
 
@@ -9,7 +9,7 @@ return [
      * put them (manually) here.
      */
     'settings' => [
-        KaidoSetting::class,
+        SystemSetting::class,
     ],
 
     /*

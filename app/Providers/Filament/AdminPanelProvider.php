@@ -5,7 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Login;
 use App\Filament\Widgets\CopyrightWidget;
 use App\Models\User;
-use App\Settings\KaidoSetting;
+use App\Settings\SystemSetting;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Schema;
 
 class AdminPanelProvider extends PanelProvider
 {
-    private ?KaidoSetting $settings = null;
+    private ?SystemSetting $settings = null;
     //constructor
     public function __construct()
     {
@@ -46,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
         // Check if settings table exists first
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
-                $this->settings = app(KaidoSetting::class);
+                $this->settings = app(SystemSetting::class);
             }
         } catch (\Exception $e) {
             $this->settings = null;

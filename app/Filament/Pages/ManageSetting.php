@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages;
 
-use App\Settings\KaidoSetting;
+use App\Settings\SystemSetting;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -16,7 +16,7 @@ class ManageSetting extends SettingsPage
     use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static string $settings = KaidoSetting::class;
+    protected static string $settings = SystemSetting::class;
 
     protected static ?string $navigationGroup = 'Settings';
 
